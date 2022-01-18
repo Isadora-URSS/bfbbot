@@ -64,7 +64,7 @@ class comandos(
             nome = str(ctx.author).split("#")[0]
             for i in range(quantia):
                 if self.bot.flood != True:
-                    await webhook.send(frase, username = nome, avatar_url = ctx.author.avatar_url)
+                    await webhook.send(frase, username = nome, avatar_url = ctx.author.avatar.url)
                     await asyncio.sleep(0.9)
                 else:
                     await webhook.delete()
