@@ -9,6 +9,7 @@ import random
 from hashlib import sha1
 import hmac
 import time
+import pprint
 
 class twitterview(discord.ui.View):
     def __init__(self, cog, id, link):
@@ -153,18 +154,29 @@ class twitter(
             for tweet_referenciado in post['referenced_tweets']:
                 if tweet_referenciado['type'] == 'replied_to':
                     id_tweet = tweet_referenciado['id']
-                    for tweet in anexos['tweets']:
-                        if tweet['id'] == id_tweet:
-                            nome_autor_referenciado = "(Não foi possível obter o nome do autor)"
-                            for usuario in anexos['users']:
-                                if usuario['id'] == tweet['author_id']:
-                                    nome_autor_referenciado = usuario['name']
-                                    break
+                    if anexos.get('tweets'):
+                        for tweet in anexos['tweets']:
+                            if tweet['id'] == id_tweet:
+                                nome_autor_referenciado = "(Não foi possível obter o nome do autor)"
+                                for usuario in anexos['users']:
+                                    if usuario['id'] == tweet['author_id']:
+                                        nome_autor_referenciado = usuario['name']
+                                        break
+                                embed.add_field(
+                                    name = "Resposta",
+                                    value = f"Esse tweet responde a um tweet postado originalmente por {nome_autor_referenciado}.\n**Conteúdo**: \"{tweet['text']}\""
+                                )
+                                break
+                        else:
                             embed.add_field(
                                 name = "Resposta",
-                                value = f"Esse tweet responde a um tweet postado originalmente por {nome_autor_referenciado}.\n**Conteúdo**: \"{tweet['text']}\""
+                                value = "Esse tweet responde a outro tweet, mas o autor privou seu perfil então ele não será exibido aqui."
                             )
-                            break
+                    else:
+                        embed.add_field(
+                            name = "Resposta",
+                            value = "Esse tweet responde a outro tweet, mas o autor privou seu perfil então ele não será exibido aqui."
+                        )
         if 'attachments' in post:
             if 'media_keys' in post['attachments']:
                 id_midia = post['attachments']['media_keys'][0]
@@ -265,6 +277,7 @@ class twitter(
         url = self.url_pesquisa_posts + f"&since_id={ultimo_tweet_id}"
         async with self.bot.conexão.get(url, headers = self.autenticação_padrão) as resposta:
             json = await resposta.json()
+            pprint.pprint(json)
             if json['meta']['result_count'] > 0:
                 for post in json["data"]:
                     for autor in self.perfis:
