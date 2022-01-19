@@ -9,7 +9,6 @@ import random
 from hashlib import sha1
 import hmac
 import time
-import pprint
 
 class twitterview(discord.ui.View):
     def __init__(self, cog, id, link):
@@ -277,7 +276,6 @@ class twitter(
         url = self.url_pesquisa_posts + f"&since_id={ultimo_tweet_id}"
         async with self.bot.conexão.get(url, headers = self.autenticação_padrão) as resposta:
             json = await resposta.json()
-            pprint.pprint(json)
             if json['meta']['result_count'] > 0:
                 for post in json["data"]:
                     for autor in self.perfis:
