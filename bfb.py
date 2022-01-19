@@ -190,6 +190,8 @@ class MeuBot(commands.Bot):
         texto = f"Esse erro não tem mensagem associada, com certeza é erro de código. Informações fodas: {error}"
         if isinstance(error, commands.MissingRequiredArgument):
             texto = "Você não escreveu tudo que precisava pro comando seu cabeça de pika"
+        elif isinstance(error, commands.MemberNotFound):
+            texto = "Você não passou um membro válido"
         elif isinstance(error, commands.BadArgument):
             texto = "Você passou alguma informação necessária pro comando de forma errada"
         elif isinstance(error, commands.CommandNotFound):
@@ -202,6 +204,8 @@ class MeuBot(commands.Bot):
             texto = "Vc é um merda, fez alguma merdinha e agora você-sabe-quem te proibiu de usar comandos. Uma mamada e vc é desbanido (ctz q é o fred)"
         elif isinstance(error, commands.CommandOnCooldown):
             texto = f"Esse comando é limitado por tempo, tente novamente em {error.retry_after} segundos"
+        elif isinstance(error, commands.MaxConcurrencyReached):
+            texto = "Esse comando já está em execução o número máximo de vezes permitidas"
         elif isinstance(error, commands.NoPrivateMessage):
             texto = "Saaaaaai do meu pv seu abusador estuprador"
         await ctx.send(texto)
