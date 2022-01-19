@@ -1,9 +1,10 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 import os
 import asyncio
 import time
+import random
 
 class comandos(
     commands.Cog,
@@ -12,6 +13,29 @@ class comandos(
 ):
     def __init__(self, bot):
         self.bot = bot
+        self.rickrolls = (
+            "https://youtu.be/DLzxrzFCyOs",
+            "https://youtu.be/CFVPW6oV67s",
+            "https://youtu.be/34Ig3X59_qA",
+            "https://youtu.be/pvJnMhvYscE",
+            "https://youtu.be/dQw4w9WgXcQ",
+            "https://youtu.be/X_8Nh5XfRw0",
+            "https://youtu.be/u6NOTogsw8M",
+            "https://youtu.be/59O0TgS7EMI",
+            "https://youtu.be/0nfLPq7-K2w",
+            "https://open.spotify.com/track/6VPOVkex1tTqsMlMyH8Ebf?si=JEYWITQdS5CIrpoPdonHcA&utm_source=copy-link",
+            "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=nt4kQDqvS4OakLsKMEYB7w&utm_source=copy-link"
+        )
+        self.rickroll.start()
+
+    @tasks.loop(minutes = 10)
+    async def rickroll(self):
+        if random.randint(0, 50) == 1:
+            canal = random.choice(self.bot.get_guild(719619736375394412).text_channels)
+            rickroll = random.choice(self.rickrolls)
+            await canal.send(f"<{rickroll}>")
+        else:
+            return
 
     @commands.command()
     async def tetadojp(self, ctx):
