@@ -151,7 +151,7 @@ class comandos(
         try:
             await asyncio.wait_for(self.esperar_cessarfogo(), timeout = tempo)
         except asyncio.TimeoutError:
-            await ctx.guild.ban(membro)
+            await ctx.guild.ban(membro, delete_message_days = 0)
             await ctx.send("Bani o alvo do comando.")
         else:
             self.evento.clear()
