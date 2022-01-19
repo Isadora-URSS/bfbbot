@@ -26,8 +26,13 @@ class comandos(
             "https://open.spotify.com/track/6VPOVkex1tTqsMlMyH8Ebf?si=JEYWITQdS5CIrpoPdonHcA&utm_source=copy-link",
             "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=nt4kQDqvS4OakLsKMEYB7w&utm_source=copy-link"
         )
+        self.evento = asyncio.Event()
+        self.preparararmas_rodando = False
         self.rickroll.start()
 
+    async def esperar_cessarfogo(self):
+        await self.evento.wait()
+    
     @tasks.loop(minutes = 10)
     async def rickroll(self):
         if random.randint(0, 50) == 1:
@@ -133,6 +138,34 @@ class comandos(
         self.bot.cache[0] = await self.bot.database.botinfos.find_one({})
         self.bot.cache[1] = await self.bot.database.twitter.find_one({})
         await ctx.message.add_reaction("\u2714\ufe0f")
+
+    @commands.command(aliases = ("prepararmas", "apontarfogo", "apontararma", "prepararfogo"))
+    @commands.has_permissions(ban_members = True)
+    @commands.max_concurrency(1, commands.BucketType.default)
+    async def preparararmas(self, ctx, membro: discord.Member, tempo: int):
+        """Incia um contador para banir alguem. Se o comando cessarfogo não for usado nesse periodo, o alvo será banido. Se ele for usado, o alvo não será banido. O tempo passado é em segundos"""
+        if membro.guild_permissions.administrator or ctx.guild.roles.index(membro.top_role) >= ctx.guild.roles.index(ctx.author.top_role):
+            return await ctx.send("Você não tem poder para usar o comando nesse membro")
+        self.preparararmas_rodando = True
+        await ctx.send(f"{membro.mention}, você tem {tempo} segundos para responder.")
+        try:
+            await asyncio.wait_for(self.esperar_cessarfogo(), timeout = tempo)
+        except asyncio.TimeoutError:
+            await ctx.guild.ban(membro)
+            await ctx.send("Bani o alvo do comando.")
+        else:
+            self.evento.clear()
+            await ctx.send("Fogo cancelado.")
+        self.preparararmas_rodando = False
+        
+    @commands.command()
+    @commands.has_permissions(ban_members = True)
+    async def cessarfogo(self, ctx):
+        """Interrompe um comando preparararmas em andamento"""
+        if not self.preparararmas_rodando:
+            await ctx.send("As armas não estão apontadas")
+        else:
+            self.evento.set()
     
 def setup(bot):
     bot.add_cog(comandos(bot))
