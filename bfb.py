@@ -201,7 +201,7 @@ class MeuBot(commands.Bot):
         elif isinstance(error, commands.MissingPermissions):
             texto = "Esse comando é exclusivo para fodinhas (não vckkkkk)"
         elif isinstance(error, Banido):
-            texto = "Vc é um merda, fez alguma merdinha e agora você-sabe-quem te proibiu de usar comandos. Uma mamada e vc é desbanido (ctz q é o fred)"
+            texto = "Vc é um merdinha, fez alguma merda e agora você-sabe-quem te proibiu de usar comandos. Uma mamada e vc é desbanido (ctz q é o fred)"
         elif isinstance(error, commands.CommandOnCooldown):
             texto = f"Esse comando é limitado por tempo, tente novamente em {error.retry_after} segundos"
         elif isinstance(error, commands.MaxConcurrencyReached):

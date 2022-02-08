@@ -28,7 +28,7 @@ class comandos(
         )
         self.evento = asyncio.Event()
         self.preparararmas_rodando = False
-        self.rickroll.start()
+        #self.rickroll.start()
 
     async def esperar_cessarfogo(self):
         await self.evento.wait()
